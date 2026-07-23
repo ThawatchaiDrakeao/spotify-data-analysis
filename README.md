@@ -347,3 +347,18 @@ https://github.com/ThawatchaiDrakeao
 ⭐ If you find this project interesting, consider giving it a star!
 
 </div>
+
+---
+
+# 📸 Application Preview
+
+
+## Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+
+## Recommendation Engine
+
+![Recommendation](screenshots/recommendation.png)
+
