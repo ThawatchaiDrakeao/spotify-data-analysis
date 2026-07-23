@@ -1,0 +1,17 @@
+# Dataset
+data/raw/
+data/processed/
+*.csv
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment
+.env
+
+# Streamlit
+.streamlit/
