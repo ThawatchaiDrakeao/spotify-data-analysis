@@ -378,3 +378,16 @@ https://github.com/ThawatchaiDrakeao
 
 ![Recommendation](screenshots/recommendation.png)
 
+
+---
+
+# 📸 Application Screenshots
+
+## Dashboard
+
+<img src="./screenshots/dashboard.png" width="900">
+
+## Recommendation
+
+<img src="./screenshots/recommendation.png" width="900">
+
