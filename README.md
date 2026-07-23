@@ -35,6 +35,22 @@ and generates personalized recommendations using a hybrid recommendation approac
 
 # 🚀 Live Demo
 
+<div align="center">
+
+## 🌐 Try the Application
+
+<a href="https://spotify-data-analysis-fong.streamlit.app/">
+
+<img src="https://img.shields.io/badge/Open%20Live%20Demo-Spotify%20AI%20Recommendation-1DB954?style=for-the-badge&logo=spotify">
+
+</a>
+
+<br>
+
+🔗 https://spotify-data-analysis-fong.streamlit.app/
+
+</div>
+
 ## 🌐 Application
 
 https://spotify-data-analysis-fong.streamlit.app/
@@ -275,22 +291,6 @@ spotify-data-analysis/
 
 ---
 
-# 📸 Screenshots
-
-
-Coming soon:
-
-
-
-screenshots/
-
-├── dashboard.png
-
-└── recommendation.png
-
-
-
----
 
 # 🔮 Future Improvements
 
@@ -347,37 +347,6 @@ https://github.com/ThawatchaiDrakeao
 ⭐ If you find this project interesting, consider giving it a star!
 
 </div>
-
----
-
-# 📸 Application Preview
-
-
-## Dashboard
-
-![Dashboard](screenshots/dashboard.png)
-
-
-## Recommendation Engine
-
-![Recommendation](screenshots/recommendation.png)
-
-
-
----
-
-# 📸 Application Preview
-
-
-## Dashboard
-
-![Dashboard](screenshots/dashboard.png)
-
-
-## Recommendation Engine
-
-![Recommendation](screenshots/recommendation.png)
-
 
 ---
 
