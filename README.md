@@ -362,3 +362,19 @@ https://github.com/ThawatchaiDrakeao
 
 ![Recommendation](screenshots/recommendation.png)
 
+
+
+---
+
+# 📸 Application Preview
+
+
+## Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+
+## Recommendation Engine
+
+![Recommendation](screenshots/recommendation.png)
+
