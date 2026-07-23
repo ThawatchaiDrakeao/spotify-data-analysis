@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import joblib
 import plotly.express as px
+import requests
+import urllib.parse
 from sklearn.preprocessing import MinMaxScaler
 
 
@@ -17,92 +19,81 @@ st.set_page_config(
 
 
 # =========================
-# Spotify Style CSS
+# Spotify Style
 # =========================
 
 st.markdown(
-    """
-    <style>
+"""
+<style>
 
-    .stApp {
-        background-color:#121212;
-        color:white;
-    }
-
-
-    h1 {
-        color:#1DB954;
-        font-size:48px;
-        font-weight:900;
-    }
+.stApp {
+    background:#121212;
+    color:white;
+}
 
 
-    .subtitle {
-        color:#b3b3b3;
-        font-size:18px;
-    }
+h1 {
+    color:#1DB954;
+    font-size:48px;
+    font-weight:900;
+}
 
 
-    .song-card {
-
-        background:#181818;
-
-        padding:20px;
-
-        border-radius:15px;
-
-        margin-bottom:15px;
-
-        border:1px solid #282828;
-
-    }
+.subtitle {
+    color:#b3b3b3;
+    font-size:18px;
+}
 
 
-    .song-title {
+.song-card {
 
-        color:#1DB954;
+    background:#181818;
+    padding:20px;
+    border-radius:18px;
+    margin-bottom:20px;
+    border:1px solid #282828;
 
-        font-size:22px;
-
-        font-weight:bold;
-
-    }
-
-
-    .artist {
-
-        color:white;
-
-        font-size:18px;
-
-    }
+}
 
 
-    .info {
+.song-title {
 
-        color:#b3b3b3;
+    color:#1DB954;
+    font-size:24px;
+    font-weight:bold;
 
-        line-height:1.8;
-
-    }
-
-
-    .stButton button {
-
-        background:#1DB954;
-
-        color:white;
-
-        border-radius:30px;
-
-        font-weight:bold;
-
-    }
+}
 
 
-    </style>
-    """,
-    unsafe_allow_html=True
+.artist {
+
+    font-size:18px;
+    color:white;
+
+}
+
+
+.info {
+
+    color:#b3b3b3;
+    line-height:1.8;
+
+}
+
+
+.stButton button {
+
+    background:#1DB954;
+    color:white;
+    border-radius:30px;
+    font-weight:bold;
+
+}
+
+
+</style>
+""",
+unsafe_allow_html=True
 )
 
 
@@ -110,6 +101,7 @@ st.markdown(
 # =========================
 # Load Data
 # =========================
+
 
 @st.cache_data
 def load_data():
@@ -119,10 +111,10 @@ def load_data():
     )
 
 
-    pop_scaler = MinMaxScaler()
+    scaler = MinMaxScaler()
 
 
-    df["pop_score"] = pop_scaler.fit_transform(
+    df["pop_score"] = scaler.fit_transform(
         df[["popularity"]]
     )
 
@@ -155,36 +147,67 @@ model, scaler = load_model()
 
 
 # =========================
-# Dashboard Sidebar
+# API Functions
 # =========================
 
-st.sidebar.title(
-    "📊 Spotify Dataset"
-)
+
+@st.cache_data
+def get_album_cover(song,artist):
 
 
-st.sidebar.metric(
-    "🎵 Total Songs",
-    f"{len(df):,}"
-)
+    query = f"{song} {artist}"
 
 
-st.sidebar.metric(
-    "👤 Artists",
-    f"{df['artists'].nunique():,}"
-)
+    url = (
+        "https://itunes.apple.com/search?"
+        f"term={urllib.parse.quote(query)}"
+        "&media=music"
+        "&limit=1"
+    )
 
 
-st.sidebar.metric(
-    "📅 Year Range",
-    f"{df['release_year'].min()} - {df['release_year'].max()}"
-)
+    try:
+
+        data = requests.get(
+            url,
+            timeout=5
+        ).json()
 
 
-st.sidebar.metric(
-    "⭐ Average Popularity",
-    round(df["popularity"].mean(),2)
-)
+        if data["resultCount"] > 0:
+
+            return (
+                data["results"][0]
+                ["artworkUrl100"]
+                .replace(
+                    "100x100",
+                    "600x600"
+                )
+            )
+
+
+    except:
+
+        pass
+
+
+    return None
+
+
+
+
+def spotify_link(song,artist):
+
+
+    query = f"{song} {artist}"
+
+
+    return (
+        "https://open.spotify.com/search/"
+        +
+        urllib.parse.quote(query)
+    )
+
 
 
 
@@ -192,16 +215,17 @@ st.sidebar.metric(
 # Feature
 # =========================
 
+
 features = [
 
-    'danceability',
-    'energy',
-    'loudness',
-    'acousticness',
-    'instrumentalness',
-    'valence',
-    'tempo',
-    'popularity'
+"danceability",
+"energy",
+"loudness",
+"acousticness",
+"instrumentalness",
+"valence",
+"tempo",
+"popularity"
 
 ]
 
@@ -213,35 +237,75 @@ X = scaler.transform(
 
 
 # =========================
+# Sidebar
+# =========================
+
+
+st.sidebar.title(
+    "📊 Spotify Dataset"
+)
+
+
+st.sidebar.metric(
+    "🎵 Songs",
+    f"{len(df):,}"
+)
+
+
+st.sidebar.metric(
+    "👤 Artists",
+    f"{df['artists'].nunique():,}"
+)
+
+
+st.sidebar.metric(
+    "📅 Years",
+    f"{df.release_year.min()} - {df.release_year.max()}"
+)
+
+
+st.sidebar.metric(
+    "⭐ Avg Popularity",
+    round(df.popularity.mean(),2)
+)
+
+
+
+
+# =========================
 # Header
 # =========================
 
+
 st.markdown(
-    """
-    <h1>
-    🎧 Spotify AI Recommendation
-    </h1>
+"""
+<h1>
+🎧 Spotify AI Recommendation
+</h1>
 
-    <div class="subtitle">
+<div class="subtitle">
 
-    AI Music Recommendation System
-    <br>
-    Powered by KNN + Hybrid Ranking
+AI Music Recommendation System
 
-    </div>
+<br>
 
-    """,
-    unsafe_allow_html=True
+Powered by KNN + Hybrid Ranking
+
+</div>
+
+""",
+unsafe_allow_html=True
 )
 
 
 
 # =========================
-# Dashboard Charts
+# Analytics
 # =========================
 
+
 st.markdown(
-    "## 📈 Music Analytics"
+"## 📈 Music Analytics"
 )
 
 
@@ -253,27 +317,20 @@ with col1:
 
 
     year_data = (
-
         df.groupby(
             "release_year"
         )
         ["popularity"]
         .mean()
         .reset_index()
-
     )
 
 
     fig = px.line(
-
         year_data,
-
         x="release_year",
-
         y="popularity",
-
-        title="Average Popularity By Year"
-
+        title="Popularity Trend"
     )
 
 
@@ -287,11 +344,9 @@ with col1:
 with col2:
 
 
-    top_artist = (
+    artist_data = (
 
-        df.groupby(
-            "artists"
-        )
+        df.groupby("artists")
         ["popularity"]
         .mean()
         .sort_values(
@@ -305,7 +360,7 @@ with col2:
 
     fig2 = px.bar(
 
-        top_artist,
+        artist_data,
 
         x="popularity",
 
@@ -319,49 +374,36 @@ with col2:
 
 
     st.plotly_chart(
-
         fig2,
-
         use_container_width=True
-
     )
 
 
 
 # =========================
-# Search Song
+# Search
 # =========================
 
 
 st.markdown(
-    "## 🔍 Find Similar Songs"
+"## 🔍 Find Similar Songs"
 )
 
 
-song_name = st.text_input(
 
+search = st.text_input(
     "Search Song",
-
     "Blinding Lights"
-
 )
 
 
 
 songs = df[
-
-    df["name"]
-
-    .str.contains(
-
-        song_name,
-
+    df.name.str.contains(
+        search,
         case=False,
-
         na=False
-
     )
-
 ]
 
 
@@ -376,31 +418,23 @@ if len(songs)==0:
 
 
 
-selected_song = st.selectbox(
-
+song = st.selectbox(
     "🎵 Choose Song",
-
-    songs["name"].unique()
-
+    songs.name.unique()
 )
 
 
 
-artists = df[
-
-    df["name"] == selected_song
-
-]["artists"].unique()
-
-
-
-selected_artist = st.selectbox(
+artist = st.selectbox(
 
     "👤 Choose Artist",
 
-    artists
+    df[
+        df.name==song
+    ].artists.unique()
 
 )
+
 
 
 
@@ -408,88 +442,81 @@ selected_artist = st.selectbox(
 # Recommendation
 # =========================
 
+
 if st.button(
     "🎵 Generate Recommendation"
 ):
 
 
-    with st.spinner(
-        "AI searching..."
-    ):
+    target = df[
+
+        (df.name==song)
+
+        &
+        
+        (df.artists==artist)
+
+    ]
 
 
-        target = df[
-
-            (df["name"]==selected_song)
-
-            &
-
-            (df["artists"]==selected_artist)
-
-        ]
-
-
-        index = target.index[0]
+    index = target.index[0]
 
 
 
-        distance, indices = model.kneighbors(
+    distance,indices = model.kneighbors(
 
-            X[index].reshape(1,-1),
+        X[index].reshape(1,-1),
 
-            n_neighbors=50
+        n_neighbors=50
 
+    )
+
+
+
+    result = df.iloc[
+        indices[0]
+    ].copy()
+
+
+
+    result["similarity"] = (
+        1-distance[0]
+    )
+
+
+    result["hybrid_score"] = (
+
+        result.similarity*0.7
+
+        +
+
+        (result.artists==artist)
+        .astype(int)*0.2
+
+        +
+
+        result.pop_score*0.1
+
+    )
+
+
+
+    result = (
+
+        result
+
+        .sort_values(
+            "hybrid_score",
+            ascending=False
         )
 
-
-
-        result = df.iloc[
-            indices[0]
-        ].copy()
-
-
-
-        result["similarity"] = (
-
-            1-distance[0]
-
+        .query(
+            "name != @song"
         )
 
+        .head(5)
 
-
-        result["hybrid_score"] = (
-
-            result["similarity"]*0.7
-
-            +
-
-            (result["artists"]==selected_artist)
-            .astype(int)*0.2
-
-            +
-
-            result["pop_score"]*0.1
-
-        )
-
-
-
-        result = (
-
-            result
-
-            .sort_values(
-                "hybrid_score",
-                ascending=False
-            )
-
-            .query(
-                "name != @selected_song"
-            )
-
-            .head(5)
-
-        )
+    )
 
 
 
@@ -502,38 +529,73 @@ if st.button(
     for _,row in result.iterrows():
 
 
-        st.markdown(
+        cover = get_album_cover(
+            row.name,
+            row.artists
+        )
+
+
+        link = spotify_link(
+            row.name,
+            row.artists
+        )
+
+
+        col1,col2 = st.columns(
+            [1,4]
+        )
+
+
+        with col1:
+
+            if cover:
+
+                st.image(
+                    cover,
+                    width=130
+                )
+
+
+        with col2:
+
+
+            st.markdown(
 
             f"""
 
             <div class="song-card">
 
             <div class="song-title">
-            🎵 {row['name']}
+
+            🎵 {row.name}
+
             </div>
 
 
             <div class="artist">
-            👤 {row['artists']}
+
+            👤 {row.artists}
+
             </div>
 
 
             <div class="info">
 
             📅 Release:
-            {row['release_year']}
+            {row.release_year}
 
             <br>
 
             ⭐ Popularity:
-            {row['popularity']}
+            {row.popularity}
 
             <br>
 
             🔥 Similarity:
-            {row['similarity']:.2f}
+            {row.similarity:.2f}
 
             </div>
+
 
             </div>
 
@@ -541,4 +603,10 @@ if st.button(
 
             unsafe_allow_html=True
 
-        )
+            )
+
+
+            st.link_button(
+                "▶ Open Spotify",
+                link
+            )
