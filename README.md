@@ -385,9 +385,9 @@ https://github.com/ThawatchaiDrakeao
 
 ## Dashboard
 
-<img src="https://raw.githubusercontent.com/ThawatchaiDrakeao/spotify-data-analysis/maihttps://raw.githubusercontent.com/ThawatchaiDrakeao/spotify-data-analysis/main/screenshots/dashboard.png" width="900">
+<img src="https://raw.githubusercontent.com/ThawatchaiDrakeao/spotify-data-analysis/main/screenshots/dashboard.png" width="900">
 
 ## Recommendation
 
-<img src="https://raw.githubusercontent.com/ThawatchaiDrakeao/spotify-data-analysis/maihttps://raw.githubusercontent.com/ThawatchaiDrakeao/spotify-data-analysis/main/screenshots/recommendation.png" width="900">
+<img src="https://raw.githubusercontent.com/ThawatchaiDrakeao/spotify-data-analysis/main/screenshots/recommendation.png" width="900">
 
